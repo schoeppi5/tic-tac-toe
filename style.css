@@ -5,6 +5,7 @@
 	--main-txt-color: #4424D6;
 	--txt-color-dark: #3214B8;
 	--txt-black: #110934;
+	--txt-error: #ff7272;
 }
 
 * {
@@ -41,6 +42,7 @@ table tr td {
 	transition: border-width 1s;
 	cursor: pointer;
 	color: var(--txt-black);
+	border-color: var(--txt-black);
 }
 
 table tr:first-child td{
@@ -134,13 +136,39 @@ table tr td:first-child {
 	width: 100%;
 	float: left;
 	font-size: .5rem;
+	padding-top: 20px;
+}
+
+.select-col {
+	width: calc(100% / 3);
+	font-size: .5rem;
+	float: left;
+}
+
+#bot1 {
+	visibility: hidden;
+}
+
+#bot2 {
+	visibility: hidden;
+}
+
+#bot1 select {
+	float: left;
+}
+
+#bot2 select{
+	float: right;
+}
+
+#selectMain {
+	margin-left: auto;
+	margin-right: auto;
 }
 
 select {
-	width: 25%;
+	width: 75%;
 	font-size: .5rem;
-	margin-top: 20px;
-	margin-bottom: 20px;
 	margin-right: auto;
 	margin-left: auto;
 	border: none;
