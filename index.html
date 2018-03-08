@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Tic Tac Toe</title>
+		<meta charset="UTF-8">
+		<link rel="shortcut icon" type="image/x-icon" href="https://upload.wikimedia.org/wikipedia/commons/f/f6/Tic_Tac_Toe.png" />
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" />
+		<link href="style.css" rel="stylesheet" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="bot.js"></script>
+		<script src="main.js"></script>
+	</head>
+	<body>
+		<div class="game">
+			<div class="form">
+				<div class="player_input"><input id="player1" value="" maxlength="1" /><span class="points" id="p1">-</span></div>
+				<div class="player_input"><span class="points" id="p2">-</span><input id="player2" value="" maxlength="1" /></div>
+				<div class="select-container">
+					<select id="difficulty">
+						<option value="1">Easy</option>
+						<option value="2">Normal</option>
+						<option value="3" selected>Hard</option>
+					</select>
+				</div>
+			</div>
+			<div class="banner"></div>
+			<div class="table-container">
+				<table>
+					<tr>
+						<td id="0"></td>
+						<td id="1"></td>
+						<td id="2"></td>
+					</tr>
+					<tr>
+						<td id="3"></td>
+						<td id="4"></td>
+						<td id="5"></td>
+					</tr>
+					<tr>
+						<td id="6"></td>
+						<td id="7"></td>
+						<td id="8"></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="footer">
+		<span>&copy;Philipp Schöppner</span>
+		</div>
+	</body>
+</html>
