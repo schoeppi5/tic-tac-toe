@@ -67,13 +67,27 @@ function showBanner(code)
 			break;
 	}
 }
-	
-	
+
+function getSpace()
+{
+	return Math.floor($('.game').height() - $('.form').outerHeight() - $('table').height());
+}
+
+function placeTable()
+{
+	$('.table-container').css("padding-top", getSpace() / 2);
+}
+
 $(document).ready(function()
 {
 	var difficultyOffset = 3;
 	
+	placeTable();
+	
 	update();
+	
+	$(window).resize(function(){placeTable();});
+	$(window).on("orientationchange", function(){placeTable();});
 	
 	$('#player1').on("change", function()
 	{
