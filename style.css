@@ -6,6 +6,8 @@
 	--txt-color-dark: #3214B8;
 	--txt-black: #110934;
 	--txt-error: #ff7272;
+	--btn-color: #d2d5d8;
+	--btn-hover-color: #b8babc;
 }
 
 * {
@@ -98,11 +100,12 @@ table tr td:first-child {
 	width: 100%;
 	float: left;
 	padding: 20px;
+	padding-bottom: 10px;
 	background-color: var(--head-color);
 }
 
 .form h1 {
-	font-size: 1.5rem;
+	font-size: 1.25rem;
 	margin-bottom: 20px;
 	color: var(--main-txt-color);
 }
@@ -180,45 +183,198 @@ select option {
 	font-size: .5rem;
 }
 
+#selectMain button {
+	width: 50%;
+	border: none;
+	border-bottom: 2px solid var(--txt-color-dark);
+	color: var(--txt-color-dark);
+	background-color: var(--btn-color);
+	font-size: .5rem;
+	float: left;
+	cursor: pointer;
+	margin-top: .1rem;
+	display: none;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+#selectMain button:hover {
+	background-color: var(--btn-hover-color);
+}
+
+#selectMain input[type=range] {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: .15rem;
+	border-radius: 10px;
+	background-color: var(--btn-color);
+	outline: none;
+	-webkit-transition: .4s;
+	transition: .4s;
+	display: none;
+}
+
+#selectMain input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 25px;
+	height: 25px;
+	border: none;
+	background: url("run.png");
+	background-repeat: no-repeat;
+	background-size: cover;
+	cursor: pointer;
+}
+
+#selectMain input[type=range]::-webkit-slider-thumb:hover {
+	width: 40px;
+	height: 40px;
+}
+
+#selectMain input[type=range]::-moz-range-thumb {
+	width: 25px;
+	height: 25px;
+	border: none;
+	background: url("run.png");
+	background-repeat: no-repeat;
+	background-size: cover;
+	cursor: pointer;
+}
+
+#selectMain input[type=range]::-moz-range-thumb:hover {
+	width: 40px;
+	height: 40px;
+}
+
+#selectMain input[type=range]:hover {
+	background-color: var(--btn-hover-color);
+}
+
 .table-container {
 	width: 100%;
 	float: left;
 }
 
-.table-container #statistic {
+#statistic {
 	float: left;
-	width: calc(100% / 3);
-	font-size: .5rem;
-	z-index: -1;
+	width: calc(100vw / 4);
+	font-size: .25rem;
+	z-index: 1;
 	position: absolute;
+	padding-left: 20px;
 }
 
-.table-container #statistic canvas {
+.landscape{
+	width: 100% !IMPORTANT;
+	padding-right: 20px;
+}
+
+.landscape canvas {
+	width: calc(100% / 3) !IMPORTANT;
+}
+
+.landscape h2 {
+	text-align: center !IMPORTANT;
+	padding-left: .25rem !IMPORTANT;
+}
+
+.landscape #legend {
+	width: calc(100% / 3) !IMPORTANT;
+}
+
+.landscape #legend #total {
+	float: none !IMPORTANT;
+	margin-left: auto !IMPORTANT;
+	margin-right: auto !IMPORTANT;
+	text-align: center !IMPORTANT;
+}
+
+.landscape #legend .legendRow {
+	padding-left: 33%;
+	width: 100%;
+	float: left;
+}
+
+.landscape #legend .legendRow .withBtn {
+	float: none;
+}
+
+#statistic #dropDown {
+	width: 100%;
+	float: left;
+}
+
+#statistic h2 {
+	color: var(--txt-color-dark);
+	font-size: .5rem;
+	cursor: pointer;
+	float: left;
+	margin-bottom: .5rem;
+	width: 100%;
+	text-align: left;
+}
+
+#statistic h2 div {
+	float: right;
+	font-size: .25rem;
+	margin-top: .15rem;
+	transition: transform 1s;
+}
+
+.rotate {
+	transform: rotate(180deg);
+}
+
+.inactive {
+	opacity: .5;
+}
+
+#statistic canvas {
+	width: 100%;
+	font-size: .25rem;
+	float: left;
+}
+
+#statistic #pie {
 	width: 50%;
 }
 
-.table-container #statistic div:not(.withBtn) {
+#statistic #legend {
+	width: 50%;
+	float: left;
+	font-size: .25rem;
+}
+
+#statistic #totalCon {
 	width: 100%;
 	float: left;
 	font-size: .25rem;
 	text-align: center;
+	margin-top: .25rem;
 }
 
-.table-container span {
+#statistic span {
 	font-size: .25rem;
 	color: var(--txt-color-dark);
+	float: left;
 }
 
-.table-container #statistic .withBtn {
+#statistic .withBtn {
+	float: left;
 	margin-right: auto;
 	margin-left: auto;
 	font-size: .25rem;
-	width: 50%;
+	width: 100%;
 	visibility: hidden;
 	text-align: center;
 }
 
-.table-container #statistic div .colorBtn {
+#statistic #line {
+	margin-top: .25rem;
+}
+
+#statistic div .colorBtn {
 	width: .25rem;
 	height: .25rem;
 	font-size: .25rem;
@@ -238,11 +394,15 @@ select option {
 	background-color: #110934;
 }
 
+#total {
+	padding-left: .25rem;
+}
+
 .banner {
 	width: 100%;
 	float: left;
 	position: absolute;
-	z-index: 1;
+	z-index: 2;
 	font-size: 1.5rem;
 	text-align: center;
 	margin-top: 40vh;

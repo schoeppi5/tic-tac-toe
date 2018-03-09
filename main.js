@@ -1,5 +1,6 @@
 var won = false;
-var context;
+var contextPie;
+var contextLine;
 var game = {
 	board: [0, 1, 2, 3, 4, 5, 6, 7, 8],
 	player1: {sign: "X", points: 0},
@@ -44,7 +45,11 @@ var game = {
 	updateStats()
 	{
 		$('.withBtn').css("visibility", "visible");
-		cake(context, [this.player1.points, this.player2.points, this.totalRounds - this.player1.points - this.player2.points], ["#FCCB1A", "#4424D6", "#110934"]);
+		let color1 = getComputedStyle(document.body).getPropertyValue("--head-color");
+		let color2 = getComputedStyle(document.body).getPropertyValue("--main-txt-color");
+		let color3 = getComputedStyle(document.body).getPropertyValue("--txt-black");
+		pie(contextPie, [this.player1.points, this.player2.points, this.totalRounds - this.player1.points - this.player2.points], [color1, color2, color3]);
+		line(contextLine, [this.player1.points, this.player2.points, (this.totalRounds - this.player1.points - this.player2.points)], [color1, color2, color3]);
 		$('#total').html("Total Rounds: " + this.totalRounds);
 		let percentWin1 = Math.floor((this.player1.points / this.totalRounds) * 100);
 		let percentWin2 = Math.floor((this.player2.points / this.totalRounds) * 100);
@@ -53,6 +58,20 @@ var game = {
 		$('#win2').html("Wins " + this.player2.sign + ": " + this.player2.points + " (" + percentWin2 + "%)");
 		$('#tie').html("Ties: " + (this.totalRounds - this.player1.points - this.player2.points) + " (" + percentTie + "%)");
 	},
+	clearStats()
+	{
+		$('.withBtn').css("visibility", "hidden");
+		$('#total').html("");
+		$('#win1').html("");
+		$('#win2').html("");
+		$('#tie').html("");
+		contextPie.clearRect(0, 0, contextPie.canvas.width, contextPie.canvas.height);
+		contextLine.clearRect(0, 0, contextLine.canvas.width, contextLine.canvas.height);
+		valuesOverTime = [];
+		stepSizeX = 1;
+		stepSizeY = 1;
+		maxY = 1;
+	},
 	resetPoints()
 	{
 		this.player1.points = 0;
@@ -60,11 +79,6 @@ var game = {
 		this.totalRounds = 0;
 	}
 };
-
-function precisionRound(number, precision) {
-	var factor = Math.pow(10, precision);
-	return Math.round(number * factor) / factor;
-}
 
 function update()
 {
@@ -115,29 +129,52 @@ function getSpace()
 function place()
 {
 	$('.table-container').css("padding-top", getSpace() / 2);
+	$('#statistic').css("margin-top", $('.form').outerHeight());
+	$('#controls').css("margin-top", $('.form').outerHeight());
+	if(parseInt($('.table-container').css("padding-top")) > $('#statistic').height())
+	{
+		$('#statistic').addClass("landscape");
+	}
+	else
+	{
+		$('#statistic').removeClass("landscape");
+	}
 }
 
 function showBvBUI()
 {
 	$('#bot1').css("visibility", "visible");
 	$('#bot2').css("visibility", "visible");
+	$('#selectMain #stop').html("Stop");
+	$('#selectMain button').show();
+	$('#selectMain input[type=range]').show();
+	place();
 }
 
 function hideBvBUI()
 {
 	$('#bot1').css("visibility", "hidden");
 	$('#bot2').css("visibility", "hidden");
+	$('#selectMain button').hide();
+	$('#selectMain input[type=range]').hide();
+	place();
 }
 
 var difficultyOffset = 3;
 var mode = 1;
 var currentPlayer = game.player1.sign;
 var runBotGame = false;
+var gameCounter;
+var speed;
 	
 $(document).ready(function()
 {
-	var canvas = document.getElementsByTagName("canvas")[0];
-	context = canvas.getContext("2d");
+	var canvas = document.getElementById("pie");
+	contextPie = canvas.getContext("2d");
+	canvas = document.getElementById("line");
+	contextLine = canvas.getContext("2d");
+	
+	speed = -1 * $('#speed').val();
 	
 	place();
 	
@@ -164,15 +201,29 @@ $(document).ready(function()
 		game.player2.sign = $(this).val();
 	});
 	
+	$('#speed').on("change", function()
+	{
+		speed = -1 * $('#speed').val();
+	});
+	
 	$('.banner').click(function()
 	{
 		update();
+	});
+	
+	$('#statistic h2').click(function()
+	{
+		console.log("CLICK!");
+		$('#ddArrow').toggleClass("rotate");
+		$('#dropDown').slideToggle(400, function(){$('#statistic h2').toggleClass("inactive");});
 	});
 	
 	$('#difficulty').on("change", function(){
 		hideBvBUI();
 		runBotGame = false;
 		game.resetPoints();
+		game.clearStats();
+		clearInterval(gameCounter);
 		switch($(this).val())
 		{
 			case "1":
@@ -200,9 +251,30 @@ $(document).ready(function()
 		update();
 	});
 	
+	$('#selectMain #restart').click(function()
+	{
+		$('#difficulty').trigger("change");
+	});
+	
+	$('#selectMain #stop').click(function()
+	{
+		if(runBotGame)
+		{
+			runBotGame = false;
+			clearInterval(gameCounter);
+			$(this).html("Start");
+		}
+		else
+		{
+			runBotGame = true;
+			botGame();
+			$(this).html("Stop");
+		}
+	});
+	
 	$('td').click(function()
 	{
-		if(!won)
+		if(!won && !runBotGame)
 		{
 			$('#player1').attr("readonly", true);
 			$('#player2').attr("readonly", true);
@@ -295,7 +367,7 @@ function botGame()
 	$('#player1').attr("readonly", true);
 	$('#player2').attr("readonly", true);
 	var currentBot = game.player1.sign;
-	var gameCounter = setInterval(function()
+	gameCounter = setInterval(function()
 	{
 		var win = game.win();
 		if(win > -1)
@@ -307,13 +379,13 @@ function botGame()
 				{
 					botGame();
 				}
-			}, 200);
+			}, speed * 2);
 		}
 		else
 		{
 			if((availableMoves(game.board, game.player1.sign, game.player2.sign).length > 0) && runBotGame)
 			{
-				if(currentBot == game.player1.sign)
+				if(currentBot == game.player1.sign && runBotGame)
 				{
 					bot1Move();
 					currentBot = game.player2.sign;
@@ -325,7 +397,7 @@ function botGame()
 				}
 			}
 		}
-	}, 100);
+	}, speed);
 }
 
 function bot1Move()
