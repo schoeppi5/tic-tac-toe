@@ -19,9 +19,7 @@ This one was a bit tricky and the algorithm behind is called minimax I think. Bu
 ##Roadmap
 
 To be honest: I don't know if I even come back to this, but in case I do there are a few things I would want to add:
-  1. Bot vs Bot (why not)
-  2. Human vs. Human
-  3. Maybe an online mode (very low priority)
-  4. There is always more one can add to something like that
+  1. Maybe an online mode (very low priority)
+  2. There is always more one can add to something like that
 
 ####P.S.: I am sorry if I made spelling mistakes or some other mistakes 
