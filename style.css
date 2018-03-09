@@ -27,9 +27,9 @@ body {
 table {
 	min-width: 9.3rem;
 	position: relative;
+	border-collapse: collapse;
 	margin-left: auto;
 	margin-right: auto;
-	border-collapse: collapse;
 }
 
 table tr {
@@ -183,6 +183,59 @@ select option {
 .table-container {
 	width: 100%;
 	float: left;
+}
+
+.table-container #statistic {
+	float: left;
+	width: calc(100% / 3);
+	font-size: .5rem;
+	z-index: -1;
+	position: absolute;
+}
+
+.table-container #statistic canvas {
+	width: 50%;
+}
+
+.table-container #statistic div:not(.withBtn) {
+	width: 100%;
+	float: left;
+	font-size: .25rem;
+	text-align: center;
+}
+
+.table-container span {
+	font-size: .25rem;
+	color: var(--txt-color-dark);
+}
+
+.table-container #statistic .withBtn {
+	margin-right: auto;
+	margin-left: auto;
+	font-size: .25rem;
+	width: 50%;
+	visibility: hidden;
+	text-align: center;
+}
+
+.table-container #statistic div .colorBtn {
+	width: .25rem;
+	height: .25rem;
+	font-size: .25rem;
+	border: 1px solid var(--txt-black);
+	float: left;
+}
+
+#colorWin1 {
+	background-color: #FCCB1A;
+}
+
+#colorWin2 {
+	background-color: #4424D6;
+}
+
+#colorTie {
+	background-color: #110934;
 }
 
 .banner {

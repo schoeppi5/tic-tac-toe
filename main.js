@@ -1,7 +1,10 @@
+var won = false;
+var context;
 var game = {
 	board: [0, 1, 2, 3, 4, 5, 6, 7, 8],
 	player1: {sign: "X", points: 0},
 	player2: {sign: "O", points: 0},
+	totalRounds: 0,
 	clear() {
 		$('#player1').attr("readonly", false);
 		$('#player2').attr("readonly", false);
@@ -19,25 +22,49 @@ var game = {
 		if(winning(this.board, this.player1.sign))
 		{
 			this.player1.points++;
+			this.totalRounds++;
+			this.updateStats();
 			return 1;
 		}
 		else if(winning(this.board, this.player2.sign))
 		{
 			this.player2.points++;
+			this.totalRounds++;
+			this.updateStats();
 			return 2;
 		}
 		else if(availableMoves(this.board, this.player1.sign, this.player2.sign).length == 0)
 		{
+			this.totalRounds++;
+			this.updateStats();
 			return 0;
 		}
 		return -1;
+	},
+	updateStats()
+	{
+		$('.withBtn').css("visibility", "visible");
+		cake(context, [this.player1.points, this.player2.points, this.totalRounds - this.player1.points - this.player2.points], ["#FCCB1A", "#4424D6", "#110934"]);
+		$('#total').html("Total Rounds: " + this.totalRounds);
+		let percentWin1 = Math.floor((this.player1.points / this.totalRounds) * 100);
+		let percentWin2 = Math.floor((this.player2.points / this.totalRounds) * 100);
+		let percentTie = Math.floor(((this.totalRounds - this.player1.points - this.player2.points) / this.totalRounds) * 100);
+		$('#win1').html("Wins " + this.player1.sign + ": " + this.player1.points + " (" + percentWin1 + "%)");
+		$('#win2').html("Wins " + this.player2.sign + ": " + this.player2.points + " (" + percentWin2 + "%)");
+		$('#tie').html("Ties: " + (this.totalRounds - this.player1.points - this.player2.points) + " (" + percentTie + "%)");
 	},
 	resetPoints()
 	{
 		this.player1.points = 0;
 		this.player2.points = 0;
+		this.totalRounds = 0;
 	}
 };
+
+function precisionRound(number, precision) {
+	var factor = Math.pow(10, precision);
+	return Math.round(number * factor) / factor;
+}
 
 function update()
 {
@@ -53,10 +80,13 @@ function update()
 	$('.banner').stop().hide();
 	
 	game.clear();
+	
+	won = false;
 }
 
 function showBanner(code)
 {
+	won = true;
 	var banner = $('.banner');
 	switch(code)
 	{
@@ -106,6 +136,8 @@ var runBotGame = false;
 	
 $(document).ready(function()
 {
+	var canvas = document.getElementsByTagName("canvas")[0];
+	context = canvas.getContext("2d");
 	
 	place();
 	
@@ -170,42 +202,45 @@ $(document).ready(function()
 	
 	$('td').click(function()
 	{
-		$('#player1').attr("readonly", true);
-		$('#player2').attr("readonly", true);
-		$('#player1').css("background-color", "white");
-		$('#player2').css("background-color", "white");
-		if(game.player1.sign === game.player2.sign)
+		if(!won)
 		{
-			$('#player1').css("background-color", "var(--txt-error)");
-			$('#player2').css("background-color", "var(--txt-error)");
-			$('#player1').attr("readonly", false);
-			$('#player2').attr("readonly", false);
-			return;
-		}
-		if($(this).html() != game.player1.sign && $(this).html() != game.player2.sign)
-		{
-			var index = $(this).attr("id");
-			$(this).html(currentPlayer);
-			game.board[index] = currentPlayer;
-			var win = game.win();
-			if(win > -1)
+			$('#player1').attr("readonly", true);
+			$('#player2').attr("readonly", true);
+			$('#player1').css("background-color", "white");
+			$('#player2').css("background-color", "white");
+			if(game.player1.sign === game.player2.sign)
 			{
-				showBanner(win);
+				$('#player1').css("background-color", "var(--txt-error)");
+				$('#player2').css("background-color", "var(--txt-error)");
+				$('#player1').attr("readonly", false);
+				$('#player2').attr("readonly", false);
 				return;
 			}
-			if(mode == 1)
+			if($(this).html() != game.player1.sign && $(this).html() != game.player2.sign)
 			{
-				botTurn();
-			}
-			else if(mode == 2)
-			{
-				if(currentPlayer == game.player1.sign)
+				var index = $(this).attr("id");
+				$(this).html(currentPlayer);
+				game.board[index] = currentPlayer;
+				var win = game.win();
+				if(win > -1)
 				{
-					currentPlayer = game.player2.sign;
+					showBanner(win);
+					return;
 				}
-				else
+				if(mode == 1)
 				{
-					currentPlayer = game.player1.sign;
+					botTurn();
+				}
+				else if(mode == 2)
+				{
+					if(currentPlayer == game.player1.sign)
+					{
+						currentPlayer = game.player2.sign;
+					}
+					else
+					{
+						currentPlayer = game.player1.sign;
+					}
 				}
 			}
 		}

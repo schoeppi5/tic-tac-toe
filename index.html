@@ -9,6 +9,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script src="bot.js"></script>
 		<script src="main.js"></script>
+		<script src="statistics.js"></script>
 	</head>
 	<body>
 		<div class="game">
@@ -44,6 +45,13 @@
 			</div>
 			<div class="banner"></div>
 			<div class="table-container">
+				<div id="statistic">
+					<canvas width="200" height="200"></canvas>
+					<div><span id="total"></span></div>
+					<div><div class="withBtn"><div class="colorBtn" id="colorWin1"></div><span id="win1"></span></div></div>
+					<div><div class="withBtn"><div class="colorBtn" id="colorWin2"></div><span id="win2"></span></div></div>
+					<div><div class="withBtn"><div class="colorBtn" id="colorTie"></div><span id="tie"></span></div></div>
+				</div>
 				<table>
 					<tr>
 						<td id="0"></td>
