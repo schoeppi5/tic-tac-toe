@@ -164,7 +164,7 @@ var difficultyOffset = 3;
 var mode = 1;
 var currentPlayer = game.player1.sign;
 var runBotGame = false;
-var gameCounter[];
+var gameCounter = [];
 var speed;
 	
 $(document).ready(function()
