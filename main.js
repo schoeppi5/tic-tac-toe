@@ -164,7 +164,7 @@ var difficultyOffset = 3;
 var mode = 1;
 var currentPlayer = game.player1.sign;
 var runBotGame = false;
-var gameCounter;
+var gameCounter[];
 var speed;
 	
 $(document).ready(function()
@@ -223,7 +223,10 @@ $(document).ready(function()
 		runBotGame = false;
 		game.resetPoints();
 		game.clearStats();
-		clearInterval(gameCounter);
+		for(var i = 0; i < gameCounter.length; i++)
+		{
+			clearInterval(gameCounter[i]);
+		}
 		switch($(this).val())
 		{
 			case "1":
@@ -256,7 +259,10 @@ $(document).ready(function()
 		runBotGame = false;
 		game.resetPoints();
 		game.clearStats();
-		clearInterval(gameCounter);
+		for(var i = 0; i < gameCounter.length; i++)
+			{
+				clearInterval(gameCounter[i]);
+			}
 		$('#difficulty').trigger("change");
 	});
 	
@@ -265,7 +271,10 @@ $(document).ready(function()
 		if(runBotGame)
 		{
 			runBotGame = false;
-			clearInterval(gameCounter);
+			for(var i = 0; i < gameCounter.length; i++)
+			{
+				clearInterval(gameCounter[i]);
+			}
 			$(this).html("Start");
 		}
 		else
@@ -371,16 +380,22 @@ function botGame()
 	$('#player1').attr("readonly", true);
 	$('#player2').attr("readonly", true);
 	var currentBot = game.player1.sign;
-	gameCounter = setInterval(function()
+	gameCounter.push(setInterval(function()
 	{
 		if(!runBotGame)
 		{
-			clearInterval(gameCounter);
+			for(var i = 0; i < gameCounter.length; i++)
+			{
+				clearInterval(gameCounter[i]);
+			}
 		}
 		var win = game.win();
 		if(win > -1)
 		{
-			clearInterval(gameCounter);
+			for(var i = 0; i < gameCounter.length; i++)
+			{
+				clearInterval(gameCounter[i]);
+			}
 			setTimeout(function(){
 				update();
 				if(runBotGame)
@@ -405,7 +420,7 @@ function botGame()
 				}
 			}
 		}
-	}, speed);
+	}, speed));
 }
 
 function bot1Move()
