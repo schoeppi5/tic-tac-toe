@@ -227,6 +227,7 @@ $(document).ready(function()
 		{
 			clearInterval(gameCounter[i]);
 		}
+		gameCounter = [];
 		switch($(this).val())
 		{
 			case "1":
@@ -260,9 +261,10 @@ $(document).ready(function()
 		game.resetPoints();
 		game.clearStats();
 		for(var i = 0; i < gameCounter.length; i++)
-			{
-				clearInterval(gameCounter[i]);
-			}
+		{
+			clearInterval(gameCounter[i]);
+		}
+		gameCounter = [];
 		$('#difficulty').trigger("change");
 	});
 	
@@ -275,6 +277,7 @@ $(document).ready(function()
 			{
 				clearInterval(gameCounter[i]);
 			}
+			gameCounter = [];
 			$(this).html("Start");
 		}
 		else
@@ -388,6 +391,7 @@ function botGame()
 			{
 				clearInterval(gameCounter[i]);
 			}
+			gameCounter = [];
 		}
 		var win = game.win();
 		if(win > -1)
@@ -396,6 +400,7 @@ function botGame()
 			{
 				clearInterval(gameCounter[i]);
 			}
+			gameCounter = [];
 			setTimeout(function(){
 				update();
 				if(runBotGame)
