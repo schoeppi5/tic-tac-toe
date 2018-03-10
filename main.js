@@ -253,6 +253,10 @@ $(document).ready(function()
 	
 	$('#selectMain #restart').click(function()
 	{
+		runBotGame = false;
+		game.resetPoints();
+		game.clearStats();
+		clearInterval(gameCounter);
 		$('#difficulty').trigger("change");
 	});
 	
@@ -369,6 +373,10 @@ function botGame()
 	var currentBot = game.player1.sign;
 	gameCounter = setInterval(function()
 	{
+		if(!runBotGame)
+		{
+			clearInterval(gameCounter);
+		}
 		var win = game.win();
 		if(win > -1)
 		{
