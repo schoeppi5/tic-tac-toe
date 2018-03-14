@@ -270,6 +270,8 @@ $(document).ready(function()
 	
 	$('#selectMain #stop').click(function()
 	{
+		$('#player1').attr("readonly", false);
+		$('#player2').attr("readonly", false);
 		if(runBotGame)
 		{
 			runBotGame = false;
@@ -382,6 +384,16 @@ function botGame()
 {
 	$('#player1').attr("readonly", true);
 	$('#player2').attr("readonly", true);
+	$('#player1').css("background-color", "white");
+	$('#player2').css("background-color", "white");
+	if((game.player1.sign === game.player2.sign) || !isNaN(game.player1.sign) || !isNaN(game.player2.sign))
+	{
+		$('#player1').css("background-color", "var(--txt-error)");
+		$('#player2').css("background-color", "var(--txt-error)");
+		$('#player1').attr("readonly", false);
+		$('#player2').attr("readonly", false);
+		return;
+	}
 	var currentBot = game.player1.sign;
 	gameCounter.push(setInterval(function()
 	{
