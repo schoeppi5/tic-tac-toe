@@ -296,7 +296,7 @@ $(document).ready(function()
 			$('#player2').attr("readonly", true);
 			$('#player1').css("background-color", "white");
 			$('#player2').css("background-color", "white");
-			if(game.player1.sign === game.player2.sign)
+			if((game.player1.sign === game.player2.sign) || !isNaN(game.player1.sign) || !isNaN(game.player2.sign))
 			{
 				$('#player1').css("background-color", "var(--txt-error)");
 				$('#player2').css("background-color", "var(--txt-error)");
