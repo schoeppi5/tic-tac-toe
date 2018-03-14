@@ -270,8 +270,6 @@ $(document).ready(function()
 	
 	$('#selectMain #stop').click(function()
 	{
-		$('#player1').attr("readonly", false);
-		$('#player2').attr("readonly", false);
 		if(runBotGame)
 		{
 			runBotGame = false;
