@@ -1,3 +1,4 @@
+import {Board} from "./game"
 interface Bot {
     readonly sign: string
     /**
@@ -7,11 +8,11 @@ interface Bot {
     move(board: Board): number
 }
 
-class HardBot implements Bot {
+export class HardBot implements Bot {
     readonly sign: string
 
     constructor(sign: string) {
-        this.sign == sign
+        this.sign = sign
     }
 
     /**
@@ -27,38 +28,37 @@ class HardBot implements Bot {
         let botSign = this.sign
         let foeSign = this.getFoe(board)
 
-        function minimax(board: Board, currentPlayer: string): Move {
-            return Math.max.apply(Math, 
-                board.emptyFields().map(i => {
-                    let move: Move = {index: i, score: 0} // the current move
-                    let boardCopy: Board = board // copy the board as to not change it
-                    try {
-                        let isGameOver: boolean = boardCopy.movePlayer(i, currentPlayer) // make the move
-                        if (isGameOver) {
-                            if (boardCopy.draw()) {
-                                move.score = 0 // noone won
-                            } else if (boardCopy.won(botSign)) {
-                                move.score = 10 // bot won
-                            } else {
-                                move.score = -10 // foe won
-                            }
+        function minimax(board: Board, currentPlayer: string): Array<Move> {
+            return board.emptyFields.map(i => {
+                let move: Move = {index: i, score: 0} // the current move
+                let boardCopy: Board = board // copy the board as to not change it
+                try {
+                    let isGameOver: boolean = boardCopy.movePlayer(i, currentPlayer) // make the move
+                    if (isGameOver) {
+                        if (boardCopy.draw()) {
+                            move.score = 0 // noone won
+                        } else if (boardCopy.won(botSign)) {
+                            move.score = 10 // bot won
                         } else {
-                            move.score = minimax(boardCopy, (currentPlayer == botSign ? foeSign : botSign)).score // get best move recursivly
+                            move.score = -10 // foe won
                         }
-                    } catch (error) {
-                        if (error instanceof RangeError) {
-                            console.log(`Move ${i} seems to be taken`)
-                        } else {
-                            throw error
-                        }
+                    } else {
+                        move.score = minimax(boardCopy, (currentPlayer == botSign ? foeSign : botSign))
+                                        .sort((a ,b) => a.score - b.score)[0].score // get best move recursivly
                     }
-                    return move
-                })
-            )
+                } catch (error) {
+                    if (error instanceof RangeError) {
+                        console.log(`Move ${i} seems to be taken`)
+                    } else {
+                        throw error
+                    }
+                }
+                return move
+            })
         }
 
         let boardCopy: Board = board
-        return minimax(boardCopy, botSign).index
+        return minimax(boardCopy, botSign).sort((a ,b) => a.score - b.score)[0].index
     }
 
     /**
@@ -67,7 +67,7 @@ class HardBot implements Bot {
      * @returns the foe's sign
      */
     private getFoe(board: Board): string {
-        if (board.getPlayerOne() == this.sign) return board.getPlayerTwo()
-        else return board.getPlayerOne()
+        if (board.playerOne == this.sign) return board.playerTwo
+        else return board.playerOne
     }
 }

@@ -1,0 +1,23 @@
+{
+  "name": "tic-tac-toe",
+  "version": "0.1.0",
+  "description": "A browser-based tic tac toe",
+  "main": "main.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schoeppi5/tic-tac-toe.git"
+  },
+  "author": "Philipp Schöppner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/schoeppi5/tic-tac-toe/issues"
+  },
+  "homepage": "https://github.com/schoeppi5/tic-tac-toe#readme",
+  "devDependencies": {
+    "typescript": "^4.3.4"
+  }
+}
