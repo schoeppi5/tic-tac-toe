@@ -7,7 +7,7 @@
     Player,
   } from "../logic/game";
   import { createEventDispatcher } from "svelte";
-  
+
   export let board: Field[];
   export let fieldToString: (arg0: Field) => string;
   export let player: Player;

@@ -3,13 +3,7 @@
   import Scoreboard from "./lib/Scoreboard.svelte";
   import Settings from "./lib/Settings.svelte";
   import ThemeSelector from "./lib/ThemeSelector.svelte";
-  import {
-    Field,
-    Game,
-    Mode,
-    newBoard,
-    Outcome,
-  } from "./logic/game";
+  import { Field, Game, Mode, newBoard, Outcome } from "./logic/game";
   import type { Theme } from "./logic/theme";
 
   let board: Field[] = newBoard();
@@ -47,7 +41,7 @@
     let elements = Object.entries(detail);
     for (let e of elements) {
       if (typeof e[1] === "string") {
-        document.documentElement.style.setProperty(`--${e[0]}`, `${e[1]}`)
+        document.documentElement.style.setProperty(`--${e[0]}`, `${e[1]}`);
       }
     }
   }

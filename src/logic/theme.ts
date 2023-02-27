@@ -14,12 +14,12 @@ export class Theme {
     background,
     name,
   }: {
-    primary: string,
-    secondary: string,
-    primaryAccent: string,
-    secondaryAccent: string,
-    background: string,
-    name: string,
+    primary: string;
+    secondary: string;
+    primaryAccent: string;
+    secondaryAccent: string;
+    background: string;
+    name: string;
   }) {
     this.primary = primary;
     this.secondary = secondary;
