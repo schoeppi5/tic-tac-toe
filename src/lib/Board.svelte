@@ -7,11 +7,22 @@
     Player,
   } from "../logic/game";
   import { createEventDispatcher } from "svelte";
+  import {
+    connect,
+    MoveMessage,
+    Offer,
+    sendMove,
+    sendOffer,
+  } from "../logic/online/websocket";
+  import { generateID } from "../logic/online/online";
 
   export let board: Field[];
   export let fieldToString: (arg0: Field) => string;
   export let player: Player;
   export let enemy: Player;
+
+  let playerID = "";
+  let selfID = "";
 
   let currentPlayer: Field = Field.PLAYER1 | Field.PLAYER2;
   currentPlayer = Field.PLAYER1;
@@ -23,11 +34,35 @@
     return enemy;
   }
 
+  function getInvertedPlayer(): Player {
+    if (currentPlayer === player.field) return enemy;
+    return player;
+  }
+
   function onClickHandler(index: number) {
+    if (getCurrentPlayer().isOnline()) return; // effectively disable the board, when it is not the human players move
+    moveHandler(index);
+  }
+
+  function moveHandler(index: number) {
     if (!setField(index, getCurrentPlayer().field)) return;
+    if (getInvertedPlayer().isOnline()) {
+      const onlinePlayer = getInvertedPlayer();
+      if (
+        playerID !== "" &&
+        selfID !== "" &&
+        onlinePlayer.connection !== undefined
+      ) {
+        sendMove(playerID, selfID, index, board, onlinePlayer.connection);
+        console.log(`Send move on index ${index} to player ${playerID}`);
+      } else {
+        console.error(`failed to send move to player ${playerID}`);
+      }
+    }
     currentPlayer = invertPlayer(currentPlayer);
-    if (!getCurrentPlayer().isHuman()) {
-      setField(getCurrentPlayer().move(board), getCurrentPlayer().field);
+    if (!getCurrentPlayer().isHuman() && !getCurrentPlayer().isOnline()) {
+      const i = getCurrentPlayer().move(board);
+      setField(i, getCurrentPlayer().field);
       currentPlayer = invertPlayer(currentPlayer);
     }
   }
@@ -50,30 +85,108 @@
   $: {
     if (getBlanks(board).length === 9) {
       currentPlayer = Field.PLAYER1;
-      if (!getCurrentPlayer().isHuman()) {
-        setField(getCurrentPlayer().move(board), getCurrentPlayer().field);
+      if (!getCurrentPlayer().isHuman() && !getCurrentPlayer().isOnline()) {
+        const i = getCurrentPlayer().move(board);
+        setField(i, getCurrentPlayer().field);
         currentPlayer = Field.PLAYER2;
       }
     }
   }
+
+  $: {
+    if (enemy.isOnline() && enemy.connection === undefined) {
+      selfID = generateID();
+      enemy.connection = connect(selfID, onlineHandler(enemy.field));
+    } else if (!enemy.isOnline() && enemy.connection !== undefined) {
+      enemy.connection.close();
+      enemy.connection = undefined;
+      selfID = "";
+      playerID = "";
+    }
+    if (player.isOnline() && player.connection === undefined) {
+      selfID = generateID();
+      player.connection = connect(selfID, onlineHandler(player.field));
+    } else if (!player.isOnline() && player.connection !== undefined) {
+      player.connection.close();
+      player.connection = undefined;
+      selfID = "";
+      playerID = "";
+    }
+  }
+
+  function join() {
+    if (enemy.isOnline() && enemy.connection !== undefined) {
+      sendOffer(selfID, playerID, player.field, enemy.connection);
+    } else if (player.isOnline() && player.connection !== undefined) {
+      sendOffer(selfID, playerID, enemy.field, player.connection);
+    }
+  }
+
+  function onlineHandler(
+    player: Field.PLAYER1 | Field.PLAYER2
+  ): (event: MessageEvent<string>) => void {
+    return (event: MessageEvent<string>) => {
+      const data: Offer | MoveMessage = JSON.parse(event.data) as
+        | Offer
+        | MoveMessage;
+      if (isOffer(data)) {
+        playerID = data.ownID;
+        if (data.preferredSide !== player) {
+          dispatch<"switch">("switch");
+        }
+      } else if (isMoveMessage(data)) {
+        console.log("isMoveMessage: ");
+        console.log(data);
+        moveHandler(data.index);
+      }
+    };
+  }
+
+  const isOffer = (msg: any): msg is Offer => {
+    if ((msg as Offer).preferredSide) return true;
+    return false;
+  };
+  const isMoveMessage = (msg: any): msg is MoveMessage => {
+    if ((msg as MoveMessage).board) return true;
+    return false;
+  };
 </script>
 
-<div id="grid">
-  {#each board as field, index}
-    <div
-      class="field"
-      id={index.toString()}
-      on:click={() => onClickHandler(index)}
-      on:keydown={() => onClickHandler(index)}
+<div id="board">
+  <div id="grid">
+    {#each board as field, index}
+      <div
+        class="field"
+        id={index.toString()}
+        on:click={() => onClickHandler(index)}
+        on:keydown={() => onClickHandler(index)}
+      >
+        {fieldToString(field)}
+      </div>
+    {/each}
+  </div>
+  <div
+    id="online"
+    style="display: {player.isOnline() || enemy.isOnline() ? 'flex' : 'none'}"
+  >
+    <span>{selfID}</span>
+    <input type="text" bind:value={playerID} placeholder="remote player ID" />
+    <button type="button" on:click={join} disabled={playerID.length !== 5}
+      >connect</button
     >
-      {fieldToString(field)}
-    </div>
-  {/each}
+  </div>
 </div>
 
 <style>
-  #grid {
+  #board {
+    display: flex;
+    flex-direction: column;
     height: 50%;
+    aspect-ratio: 1;
+    overflow-y: visible;
+  }
+  #grid {
+    min-height: 100%;
     aspect-ratio: 1;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -120,5 +233,16 @@
   .field:nth-child(3n) {
     /*last column*/
     border-left: var(--border);
+  }
+  #online {
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1rem;
+    background-color: var(--primary);
+    padding: 10px;
+    border-radius: 15px;
   }
 </style>
